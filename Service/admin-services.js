@@ -9,7 +9,6 @@ const knex = require("knex")({
   },
 });
 
-//GETS
 async function getUsers() {
   const admins = JSON.parse(JSON.stringify(await knex.select().table("users")));
 
@@ -27,7 +26,10 @@ async function getAdmins() {
 async function getTeachers() {
   const teacher = JSON.parse(
     JSON.stringify(
-      await knex.select("id","id_account","name").table("users").where("role", "DOCENTE")
+      await knex
+        .select("id", "id_account", "name")
+        .table("users")
+        .where("role", "DOCENTE")
     )
   );
 
@@ -44,33 +46,20 @@ async function getStudents() {
   return teacher;
 }
 
-async function findExistingEmail(email) {
-  const email_find = JSON.parse(
-    JSON.stringify(
-      await knex.select().table("users").where("email", "=", email)
-    )
-  );
-  
-  return email_find;
-}
-
-//DELETES
 async function DeleteAdmin(id) {
   return knex("users").where("id", id).del();
 }
 
-//UPDATES
 async function updateAdmin(id, name) {
-  await knex("users").where("id", "=", id).update({
+  await knex("users").where("id", id).update({
     name: name,
   });
   return;
 }
 
-//INSERTS
 async function registerAdmin(user) {
   return knex("users").insert({
-    human_talent: user.human_talent,
+    id_account: user.human_talent,
     role: user.role,
     name: user.name,
     email: user.email,
@@ -80,13 +69,42 @@ async function registerAdmin(user) {
   });
 }
 
+async function findExistingEmail(email) {
+  const email_find = JSON.parse(
+    JSON.stringify(await knex.select().table("users").where("email", email))
+  );
+  return email_find;
+}
+
+async function ExisteUser(id) {
+  const user = JSON.parse(
+    JSON.stringify(await knex.select().table("users").where("id", id))
+  );
+  return user;
+}
+
+async function ExisteTeacher(id) {
+  const user = JSON.parse(
+    JSON.stringify(
+      await knex
+        .select()
+        .table("users")
+        .where("id", id)
+        .andWhere("role", "DOCENTE")
+    )
+  );
+  return user;
+}
+
 module.exports = {
-  getAdmins,
-  getUsers,
-  getTeachers,
-  getStudents,
   DeleteAdmin,
-  updateAdmin,
   registerAdmin,
+  updateAdmin,
   findExistingEmail,
+  getStudents,
+  getTeachers,
+  getAdmins,
+  ExisteUser,
+  getUsers,
+  ExisteTeacher,
 };

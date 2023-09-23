@@ -9,14 +9,13 @@ const knex = require("knex")({
   },
 });
 
-//GETS
 async function getModulos() {
   let modulos = await knex.select("*").from("course");
   modulos = JSON.stringify(modulos);
   return JSON.parse(modulos);
 }
 
-//INSERTS
+//52:10
 async function createMod(modulos) {
   return knex("course").insert({
     name: modulos.name,
@@ -24,16 +23,13 @@ async function createMod(modulos) {
   });
 }
 
-//UPDATES
 async function updateModName(id, name) {
   return knex("course").where({ id: id }).update({ name });
 }
-
 async function updateModDes(id, description) {
   return knex("course").where({ id: id }).update({ description });
 }
 
-//DELETES
 async function deleteMod(id) {
   try {
     const modulos = await knex("course").select().where("id", id).first();
