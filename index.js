@@ -20,6 +20,7 @@ app.use("/modulos", modulosRouter);
 app.use("/user", userRouter);
 app.use("/mail", mailRouter);
 
-app.listen(3001 , () => {
+const PORT = process.env.PORT || 8000;
+app.listen(PORT , () => {
   console.log("Server started!");
 });
