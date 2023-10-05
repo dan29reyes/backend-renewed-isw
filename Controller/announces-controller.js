@@ -12,9 +12,9 @@ const {
   updateTitle: title,
 } = require("../Service/announce-services");
 
-const { SectionExists: exists } = require("../Service/section");
+const { SectionExists: exists } = require("../Service/section-services");
 
-const { ExisteUser: existUser } = require("../Service/admin");
+const { ExisteUser: existUser } = require("../Service/admin-services");
 
 async function GetAnnounForAll(_, res) {
   try {
