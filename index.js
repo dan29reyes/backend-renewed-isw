@@ -5,20 +5,22 @@ const app = express();
 
 require("dotenv").config();
 
-// const allowedOrigins = [,"http://localhost:3000"];
+const allowedOrigins = ['Access-Control-Allow-Origin',"http://localhost:3000"];
 
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error("Not allowed by CORS"));
-//     }
-//   }
-// };
+const corsOptions = {
+  origin: function (origin, callback) {
+    console.log(origin);
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+      console.log("allowed")
+    } else {
+      console.log("error");
+      callback(new Error("Not allowed by CORS"));
+    }
+  }
+};
 
-// app.use(cors(corsOptions));
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 const adminRouter = require("./Route/admin-routes");
