@@ -5,7 +5,7 @@ const app = express();
 
 require("dotenv").config();
 
-const allowedOrigins = ['Access-Control-Allow-Origin', "http://localhost:3000"];
+const allowedOrigins = ["http://localhost:3000"];
 
 const corsOptions = {
   origin: function (origin, callback) {
