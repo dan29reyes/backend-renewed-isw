@@ -193,7 +193,7 @@ async function loginUser(req, res) {
           refreshToken,
         });
       } else {
-        res .send("Invalid email or password");
+        res.send({message:"Invalid email or password"});
       }
     }
   } catch (e) {
