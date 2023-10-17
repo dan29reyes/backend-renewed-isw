@@ -139,14 +139,8 @@ async function loginUser(req, res) {
     const errorMessage = [];
 
     //Validaciones
-    if (!email) {
-      errorMessage.push("Parameter email is required");
-    }
     if (!isEmail) {
       errorMessage.push("Email must be a valid email address");
-    }
-    if (!password) {
-      errorMessage.push("Parameter password is required");
     }
 
     const email_exists = await find(email);
@@ -161,8 +155,7 @@ async function loginUser(req, res) {
     } else {
       const email_now = email_exists[0];
       const userEncryptedDetails = encryptPassword(password, email_now.salt);
-      console.log("user encrypted 1: ",userEncryptedDetails.encryptedPassword);
-      console.log("user encrypted 2: ",email_now.password);
+
       if (userEncryptedDetails.encryptedPassword === email_now.password) {
         const login_email = email_now.email;
         const accessToken = jwt.sign(
@@ -192,7 +185,7 @@ async function loginUser(req, res) {
           refreshToken,
         });
       } else {
-        res.send({message:"Invalid email or password"});
+        res.send({message:"Invalid password"});
       }
     }
   } catch (e) {
