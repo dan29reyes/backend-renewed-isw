@@ -155,7 +155,10 @@ async function loginUser(req, res) {
       errorMessage.push("Email does not exist");
     }
     if (errorMessage.length) {
-      res.status(400).send(errorMessage);
+      console.log(errorMessage)
+      res.send({
+        errorMessage
+      });
     } else {
       const email_now = email_exists[0];
       const userEncryptedDetails = encryptPassword(password, email_now.salt);
@@ -190,7 +193,7 @@ async function loginUser(req, res) {
           refreshToken,
         });
       } else {
-        res.status(401).send("Invalid email or password");
+        res .send("Invalid email or password");
       }
     }
   } catch (e) {
