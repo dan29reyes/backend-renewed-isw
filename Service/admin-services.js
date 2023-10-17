@@ -73,6 +73,7 @@ async function findExistingEmail(email) {
   const email_find = JSON.parse(
     JSON.stringify(await knex.select().table("users").where("email", email))
   );
+  console.log(email_find)
   return email_find;
 }
 
