@@ -150,7 +150,7 @@ async function loginUser(req, res) {
     }
 
     const email_exists = await find(email);
-
+    console.log(email_exists)
     if (email_exists[0].email != email) {
       errorMessage.push("Email does not exist");
     }
