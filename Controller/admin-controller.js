@@ -185,7 +185,7 @@ async function loginUser(req, res) {
           refreshToken,
         });
       } else {
-        res.send({errorMessage:"Invalid password"});
+        res.send({errorMessage:["Invalid password"]});
       }
     }
   } catch (e) {
