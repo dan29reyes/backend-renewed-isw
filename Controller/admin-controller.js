@@ -159,7 +159,8 @@ async function loginUser(req, res) {
     } else {
       const email_now = email_exists[0];
       const userEncryptedDetails = encryptPassword(password, email_now.salt);
-
+      console.log(userEncryptedDetails.encryptedPassword);
+      console.log(email_now.password);
       if (userEncryptedDetails.encryptedPassword === email_now.password) {
         const login_email = email_now.email;
 
