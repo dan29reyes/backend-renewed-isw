@@ -16,6 +16,7 @@ async function GetAnnouncesForAll() {
           "announces.id as AnnounceId",
           "announces.message as Message",
           "announces.title as Title",
+          "announces.creation_date as Date"
         )
         .table("announces")
     )
