@@ -72,7 +72,7 @@ async function GetAnnouncesForUser(id) {
         )
         .table("announces")
         .innerJoin("announces_d", "announces.id", "announces_d.announce_id")
-        .where("announces_d.user_id", "=", id)
+        .where("announces_d.user_id", id)
     )
   );
 
@@ -90,7 +90,7 @@ async function GetAnnouncesForSection(id) {
         )
         .table("announces")
         .innerJoin("announces_d", "announces.id", "announces_d.announce_id")
-        .where("announces_d.section_id", "=", id)
+        .where("announces_d.section_id", id)
     )
   );
 
@@ -115,16 +115,16 @@ async function CreateAnnounce(announce) {
 }
 
 async function DeleteAnnounce_d(announce_id) {
-  return knex("announces_d").where("announce_id", "=", announce_id).del();
+  return knex("announces_d").where("announce_id", announce_id).del();
   //knex("announces").where("id", "=", announce_id).del();
 }
 async function DeleteAnnounce(announce_id) {
-  return knex("announces").where("id", "=", announce_id).del();
+  return knex("announces").where("id", announce_id).del();
 }
 
 async function ExistAnnounce(id) {
   const announce = JSON.parse(
-    JSON.stringify(await knex.select().table("announces").where("id", "=", id))
+    JSON.stringify(await knex.select().table("announces").where("id", id))
   );
 
   return announce;
