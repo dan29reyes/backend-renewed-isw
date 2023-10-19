@@ -181,6 +181,7 @@ async function loginUser(req, res) {
         );
 
         res.send({
+          name: email_now.name,
           accessToken,
           refreshToken,
         });
