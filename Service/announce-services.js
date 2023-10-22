@@ -98,20 +98,22 @@ async function GetAnnouncesForSection(id) {
 }
 
 async function CreateAnnounce(announce) {
-  //poner info a la announce table
-  const idAnnounce = await knex("announces")
-    .insert({
+  try {
+    // Insert into announces table
+    const [idAnnounce] = await knex("announces").insert({
       message: announce.message,
       title: announce.title,
-    })
-    .returning("id");
-
-  //poner a  tabla externa
-  await knex("announces_d").insert({
-    announce_id: idAnnounce,
-    section_id: announce.section_id,
-    user_id: announce.user_id,
-  });
+      sender_id: announce.sender_id,
+    });
+    // Insert into announces_d table
+    await knex("announces_d").insert({
+      announce_id: idAnnounce,
+      section_id: announce.section_id,
+      user_id: announce.user_id,
+    });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 async function DeleteAnnounce_d(announce_id) {
