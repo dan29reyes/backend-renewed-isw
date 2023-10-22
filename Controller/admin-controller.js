@@ -140,12 +140,12 @@ async function loginUser(req, res) {
 
     //Validaciones
     if (!isEmail) {
-      errorMessage.push("Email must be a valid email address");
+      errorMessage.push("El correo debe ser un correo valido");
     }
 
     const email_exists = await find(email);
     if (email_exists.length === 0) {
-      errorMessage.push("Email does not exist");
+      errorMessage.push("No existe un correo con este email");
     }
     if (errorMessage.length) {
       console.log(errorMessage)
@@ -184,9 +184,10 @@ async function loginUser(req, res) {
           name: email_now.name,
           accessToken,
           refreshToken,
+          id: email_now.id,
         });
       } else {
-        res.send({errorMessage:["Invalid password"]});
+        res.send({errorMessage:["Contraseña incorrecta"]});
       }
     }
   } catch (e) {
