@@ -106,6 +106,7 @@ async function CreateAnnounce(announce) {
       sender_id: announce.sender_id,
     });
     // Insert into announces_d table
+    console.log("idAnnounce", idAnnounce)
     await knex("announces_d").insert({
       announce_id: idAnnounce,
       section_id: announce.section_id,
