@@ -100,18 +100,23 @@ async function GetAnnouncesForSection(id) {
 async function CreateAnnounce(announce) {
   try {
     // Insert into announces table
-    const [idAnnounce] = await knex("announces").insert({
+    const [result] = await knex("announces").insert({
       message: announce.message,
       title: announce.title,
       sender_id: announce.sender_id,
     });
+
+    // Get the last inserted ID
+    const idAnnounce = result.insertId;
+
     // Insert into announces_d table
-    console.log("idAnnounce", idAnnounce)
     await knex("announces_d").insert({
       announce_id: idAnnounce,
       section_id: announce.section_id,
       user_id: announce.user_id,
     });
+
+    console.log("Announce ID:", idAnnounce);
   } catch (error) {
     console.error(error);
   }
