@@ -110,9 +110,8 @@ async function DeleteAnnounce(req, res) {
 
 async function UpdateAnnounceTitle(req, res) {
   try {
-    const { id } = req.query;
-    const {title_new} = req.body;
-    
+    const {id, title_new} = req.body;
+
     await title(id, title_new);
     res.status(200).send();
   } catch (exception) {
@@ -123,8 +122,7 @@ async function UpdateAnnounceTitle(req, res) {
 
 async function UpdateAnnounceDescrip(req, res) {
   try {
-    const { id } = req.query;
-    const {description_new} = req.body;
+    const {id, description_new} = req.body;
 
     await descrip(id, description_new);
     res.status(200).send();

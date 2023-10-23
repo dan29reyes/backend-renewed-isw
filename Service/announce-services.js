@@ -137,18 +137,18 @@ async function ExistSectionAnnounce(id) {
   return announce;
 }
 
-async function updateTitle(id_announces, newtitle) {
+async function updateTitle(id_announces, title_new) {
    await knex('announces')
     .where({ id: id_announces })
-    .update({ title: newtitle })
+    .update({ title: title_new })
    
   return;
 }
 
-async function updateDescrip(id, newdescrip) {
+async function updateDescrip(id, description_new) {
   await knex("announces")
     .where(id, id)
-    .update({ message: newdescrip });
+    .update({ message: description_new });
   return;
 }
 
