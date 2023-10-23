@@ -115,7 +115,6 @@ async function CreateAnnounce(announce) {
 
 async function DeleteAnnounce_d(announce_id) {
   return knex("announces_d").where("announce_id", announce_id).del();
-  //knex("announces").where("id", "=", announce_id).del();
 }
 async function DeleteAnnounce(announce_id) {
   return knex("announces").where("id", announce_id).del();
@@ -125,7 +124,6 @@ async function ExistAnnounce(id) {
   const announce = JSON.parse(
     JSON.stringify(await knex.select().table("announces").where("id", id))
   );
-
   return announce;
 }
 
@@ -142,17 +140,15 @@ async function ExistSectionAnnounce(id) {
 async function updateTitle(id_announces, newtitle) {
    await knex('announces')
     .where({ id: id_announces })
-    .update({ 
-      title: newtitle 
-    }, ['id', 'title'])
+    .update({ title: newtitle })
    
   return;
 }
 
 async function updateDescrip(id, newdescrip) {
-  await knex("announces").where("id", "=", id).update({
-    message: newdescrip,
-  });
+  await knex("announces")
+    .where(id, id)
+    .update({ message: newdescrip });
   return;
 }
 

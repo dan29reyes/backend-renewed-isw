@@ -112,9 +112,6 @@ async function UpdateAnnounceTitle(req, res) {
   try {
     const { id } = req.query;
     const {title_new} = req.body;
-
-    console.log("title_new",title_new);
-    console.log("id",id);
     
     await title(id, title_new);
     res.status(200).send();
