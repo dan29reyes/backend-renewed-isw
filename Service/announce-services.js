@@ -145,9 +145,9 @@ async function updateTitle(id_announces, title_new) {
   return;
 }
 
-async function updateDescrip(id, description_new) {
+async function updateDescrip(id_announces, description_new) {
   await knex("announces")
-    .where(id, id)
+    .where({id: id_announces})
     .update({ message: description_new });
   return;
 }
