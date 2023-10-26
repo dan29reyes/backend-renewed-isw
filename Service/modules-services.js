@@ -9,45 +9,43 @@ const knex = require("knex")({
   },
 });
 
-async function getModulos() {
-  let modulos = await knex.select("*").from("course");
-  modulos = JSON.stringify(modulos);
-  return JSON.parse(modulos);
-}
-
-//52:10
-async function createMod(modulos) {
-  return knex("course").insert({
-    name: modulos.name,
-    description: modulos.description,
+async function createModule(module) {
+  return knex("modules").insert({
+    name_module: module.name,
+    description_module: module.description,
   });
 }
 
-async function updateModName(id, name) {
-  return knex("course").where({ id: id }).update({ name });
-}
-async function updateModDes(id, description) {
-  return knex("course").where({ id: id }).update({ description });
+async function updateModuleName(module) {
+  return knex("modules")
+    .where({ id_module: module.id_module })
+    .update({ name_module: module.name });
 }
 
-async function deleteMod(id) {
+async function updateModuleDescription(module) {
+  return knex("courses")
+    .where({ id_module: module.id_module })
+    .update({ description_module: module.description });
+}
+
+async function deleteModule(id) {
   try {
-    const modulos = await knex("course").select().where("id", id).first();
-    if (!modulos) {
-      throw new Error("Modulo not found");
-    }
-
-    await knex("course").where("id", id).del();
-    console.log("Modulo deleted successfully");
+    return await knex("modules").where("id_module", id).del();
   } catch (error) {
     throw new Error(error.message);
   }
 }
 
+async function getModules() {
+  let modules = await knex("modules").select("*");
+  modules = JSON.stringify(modules);
+  return JSON.parse(modules);
+}
+
 module.exports = {
-  getModulos,
-  createMod,
-  updateModName,
-  updateModDes,
-  deleteMod,
+  createModule,
+  updateModuleDescription,
+  updateModuleName,
+  deleteModule,
+  getModules,
 };

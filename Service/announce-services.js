@@ -8,161 +8,88 @@ const knex = require("knex")({
     database: process.env.DB_DATABASE,
   },
 });
-async function GetAnnouncesForAll() {
-  const announcements = JSON.parse(
-    JSON.stringify(
-      await knex
-        .select(
-          "announces.id as AnnounceId",
-          "announces.message as Message",
-          "announces.title as Title",
-          "announces.creation_date as Date"
-        )
-        .table("announces")
-    )
-  );
 
-  return announcements;
-}
-
-async function GetAnnouncesForSections() {
-  const announcements = JSON.parse(
-    JSON.stringify(
-      await knex
-        .select(
-          "announces.id as AnnounceId",
-          "announces.message as Message",
-          "announces.title as Title",
-        )
-        .table("announces")
-        .innerJoin("announces_d", "announces.id", "announces_d.announce_id")
-        .whereNotNull("announces_d.section_id")
-    )
-  );
-
-  return announcements;
-}
-
-async function GetAnnouncesForUsers() {
-  const announcements = JSON.parse(
-    JSON.stringify(
-      await knex
-        .select(
-          "announces.id as AnnounceId",
-          "announces.message as Message",
-          "announces.title as Title"
-        )
-        .table("announces")
-        .innerJoin("announces_d", "announces.id", "announces_d.announce_id")
-        .whereNotNull("announces_d.user_id")
-    )
-  );
-
-  return announcements;
-}
-
-async function GetAnnouncesForUser(id) {
-  const announcements = JSON.parse(
-    JSON.stringify(
-      await knex
-        .select(
-          "announces.id as AnnounceId",
-          "announces.message as Message",
-          "announces.title as Title"
-        )
-        .table("announces")
-        .innerJoin("announces_d", "announces.id", "announces_d.announce_id")
-        .where("announces_d.user_id", id)
-    )
-  );
-
-  return announcements;
-}
-
-async function GetAnnouncesForSection(id) {
-  const announcements = JSON.parse(
-    JSON.stringify(
-      await knex
-        .select(
-          "announces.id as AnnounceId",
-          "announces.message as Message",
-          "announces.title as Title"
-        )
-        .table("announces")
-        .innerJoin("announces_d", "announces.id", "announces_d.announce_id")
-        .where("announces_d.section_id", id)
-    )
-  );
-
-  return announcements;
-}
-
-async function CreateAnnounce(announce) {
-  //poner info a la announce table
-  const idAnnounce = await knex("announces")
-    .insert({
-      message: announce.message,
-      title: announce.title,
-    })
-
-  //poner a  tabla externa
-  await knex("announces_d").insert({
-    announce_id: idAnnounce,
-    section_id: announce.section_id,
-    user_id: announce.user_id,
+//Post
+async function createAnnounce(announce) {
+  const id_announce = await knex("announcements").insert({
+    title_announce: announce.title,
+    message_announce: announce.message,
+    id_sender: announce.sender,
   });
+
+  await knex("announcements_clinics").insert({
+    id_announce: id_announce,
+    id_clinic: clinic
+  })
 }
 
-async function DeleteAnnounce_d(announce_id) {
-  return knex("announces_d").where("announce_id", announce_id).del();
-}
-async function DeleteAnnounce(announce_id) {
-  return knex("announces").where("id", announce_id).del();
-}
-
-async function ExistAnnounce(id) {
-  const announce = JSON.parse(
-    JSON.stringify(await knex.select().table("announces").where("id", id))
-  );
-  return announce;
+async function updateTitle(id, title_new) {
+  return await knex("announcements")
+    .update("id_announce", id)
+    .where("title_announce", title_new);
 }
 
-async function ExistSectionAnnounce(id) {
-  const announce = JSON.parse(
-    JSON.stringify(
-      await knex.select().table("announces_d").where("section_id", id)
-    )
-  );
-
-  return announce;
+async function updateMessage(id, message_new) {
+  return await knex("aanouncements")
+    .update("id_announce", id)
+    .where("message_announce", message_new);
 }
 
-async function updateTitle(id_announces, title_new) {
-   await knex('announces')
-    .where({ id: id_announces })
-    .update({ title: title_new })
-   
-  return;
+async function updateLeido(id, patient, leido){
+  await knex("announcements_patient")
+  .update("state_announce", leido)
+  .where({id_announce: id, id_patient: patient})
 }
 
-async function updateDescrip(id_announces, description_new) {
-  await knex("announces")
-    .where({id: id_announces})
-    .update({ message: description_new });
-  return;
+//Get
+async function GetAnnouncementsForPsychologist(id_psychologist) {
+  const announcements = await knex("announcements")
+    .select("*")
+    .where("id_sender", id_psychologist);
+  announcements = JSON.stringify(announcements);
+  return JSON.parse(announcements);
+}
+
+async function GetAnnouncementsForClinic(id_clinic) {
+  const announcements = await knex
+    .select("announcements.*")
+    .table("announcements")
+    .innerJoin(
+      "announcements_clinics",
+      "announcements.id_announce = announcements_clinics.id_announce and announcements_clinics.id_clinic = " +
+        id_clinic
+    );
+  announcements = JSON.stringify(announcements);
+  return JSON.parse(announcements);
+}
+
+async function GetAnnouncementesForPatient(id_patient) {
+  const announcements = await knex
+    .select("announcements.*")
+    .table("announcements")
+    .innerJoin(
+      "announcements_patient",
+      "announcements.id_announce = announcements_patient.id_announce and announcements_patient.id_patient = " +
+        id_patient
+    );
+  announcements = JSON.stringify(announcements);
+  return JSON.parse(announcements);
+}
+
+//Delete
+async function DeleteAnnounce(id_announce) {
+  await knex("announcements")
+  .where("id_announce", id_announce)
+  .del();
 }
 
 module.exports = {
-  CreateAnnounce,
-  GetAnnouncesForSection,
-  GetAnnouncesForUser,
-  GetAnnouncesForSections,
-  GetAnnouncesForAll,
-  GetAnnouncesForUsers,
-  DeleteAnnounce,
-  ExistAnnounce,
-  DeleteAnnounce_d,
-  updateDescrip,
+  createAnnounce,
+  updateMessage,
   updateTitle,
-  ExistSectionAnnounce,
+  updateLeido,
+  GetAnnouncementesForPatient,
+  GetAnnouncementsForClinic,
+  GetAnnouncementsForPsychologist,
+  DeleteAnnounce
 };
