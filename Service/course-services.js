@@ -9,49 +9,43 @@ const knex = require("knex")({
   },
 });
 
-//Post
-async function createCourse(id) {
-  await knex("courses").insert({
-    id_module: id,
-    quarter: Date.now().quarter(),
-    year: Date.now().year(),
+async function createModule(module) {
+  return knex("modules").insert({
+    name_module: module.name,
+    description_module: module.description,
   });
 }
 
-async function assignTeacher(course) {
-  return knex("courses").where({ id_course: course.id }).update({
-    id_teacher: course.id_teacher,
-    active_course: 1,
-  });
+async function updateModuleName(module) {
+  return knex("modules")
+    .where({ id_module: module.id_module })
+    .update({ name_module: module.name });
 }
 
-async function setActiveCourse(course) {
+async function updateModuleDescription(module) {
   return knex("courses")
-    .where({ id_course: course.id })
-    .update({ active_course: course.active });
+    .where({ id_module: module.id_module })
+    .update({ description_module: module.description });
 }
 
-//Get
-async function getTeacherCourse(email_user) {
-  let courses = await knex
-    .select("courses.* as courseInfo")
-    .table("users")
-    .innerJoin("courses", "users.id_user = courses.id_teacher")
-    .where("users.email_user", email_user);
-  courses = JSON.stringify(courses);
-  return JSON.parse(courses);
+async function deleteModule(id) {
+  try {
+    return await knex("modules").where("id_module", id).del();
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
 
-async function getAllCourse() {
-  let courses = await knex.select("*").from("courses");
-  courses = JSON.stringify(courses);
-  return JSON.parse(courses);
+async function getModules() {
+  let modules = await knex("modules").select("*");
+  modules = JSON.stringify(modules);
+  return JSON.parse(modules);
 }
 
 module.exports = {
-  createCourse,
-  assignTeacher,
-  setActiveCourse,
-  getTeacherCourse,
-  getAllCourse,
+  createModule,
+  updateModuleDescription,
+  updateModuleName,
+  deleteModule,
+  getModules,
 };
