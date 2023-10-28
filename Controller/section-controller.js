@@ -1,64 +1,62 @@
-const courseService = require("../Service/course-services");
+const sectionServices = require("../Service/section-services");
 
-async function createCourse(req, res) {
-  const { id } = req.body;
+//Post
+async function createSection(req, res) {
+  const { id, course, creator } = req.body;
   try {
-    await courseService.createCourse(id);
-    res.send({ message: "Se ha creado el curso exitosamente" });
+    await sectionServices.createSection({ id, course, creator });
+    res.send({ message: "Se ha creado la sección" });
   } catch (error) {
-    res.send({ message: "No se ha podido crear el curso" });
+    res.send({ message: "No se ha podido crear la sección" });
   }
 }
+
 async function assignTeacher(req, res) {
   const { id, id_teacher } = req.body;
   try {
-    await courseService.assignTeacher({ id, id_teacher });
+    await sectionServices.assignTeacher({ id: id , id_teacher: id_teacher });
   } catch (error) {
     res.send({ message: "No se ha podido asignar un catedrático al curso" });
   }
 }
 
-async function setActiveCourse(req, res) {
+async function setActiveSection(req, res) {
   const { id, active } = req.body;
   try {
-    await courseService.setActiveCourse({ id, active });
-    if (active === 1) {
-      res.send({ message: "Se ha habilitado el curso" });
-    } else {
-      res.send({ message: "El curso ha sido deshabilitado" });
-    }
+    await sectionServices.setActiveSection({ id: id, active: active });
   } catch (error) {
-    res.send({ message: "No se ha podido actualizar el estado del curso" });
+    res.send({ message: "No se ha podido activar la sección" });
   }
 }
 
-async function getTeacherCourse(req, res) {
-  const { email } = req.body;
+//Get
+async function getTeacherSection(req, res) {
+  const { email_user } = req.body;
   try {
-    const courses = await courseService.getTeacherCourse(email);
+    const sections = await sectionServices.getTeacherSection(email_user);
     res.send({
-      courses: courses,
+      sections: sections,
     });
   } catch (error) {
-    res.send("No se ha podido recuperar los cursos de este docente");
+    res.send("No se ha podido recuperar las secciones");
   }
 }
 
-async function getAllCourse(req, res) {
+async function getAllSections(req, res) {
   try {
-    const courses = await courseService.getAllCourse();
+    const sections = await sectionServices.getAllSections();
     res.send({
-      courses: courses,
+      sections: sections,
     });
   } catch (error) {
-    res.send({ message: "No se pudieron recuperar los cursos" });
+    res.send("No se ha podido recuperar las secciones");
   }
 }
 
 module.exports = {
-  createCourse,
+  createSection,
   assignTeacher,
-  setActiveCourse,
-  getTeacherCourse,
-  getAllCourse,
+  setActiveSection,
+  getTeacherSection,
+  getAllSections,
 };

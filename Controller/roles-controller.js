@@ -2,8 +2,8 @@ const rolesServices = require("../Service/roles-services");
 
 async function createRol(req, res) {
   try {
-    const name = req.body;
-    await rolesServices.createRol(name);
+    const { name, creator } = req.body;
+    await rolesServices.createRol({ name: name, creator: creator });
     res.send({ message: "Rol created successfully" });
   } catch (error) {
     res.send({ error: error.message });
@@ -41,8 +41,8 @@ async function getRolPrivileges(req, res) {
 
 async function updateRolName(req, res) {
   try {
-    const { id_rol, name } = req.body;
-    await rolesServices.updateRolName(id_rol, name);
+    const { id_rol, name, editor } = req.body;
+    await rolesServices.updateRolName(id_rol, name, editor);
     res.send({ message: "Rol name updated successfully" });
   } catch (error) {
     res.send({ error: error.message });

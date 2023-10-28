@@ -8,7 +8,8 @@ router.get("/viewAll", privilegesControllers.getPrivileges);
 
 //Post
 router.post("/create", privilegesControllers.createPrivilege);
-router.post("/updateName", privilegesControllers.updatePrivilegeName);
+router.post("/updateElement", privilegesControllers.updatePrivilegeElement);
+router.post("/updatePrivilege", privilegesControllers.updatePrivilege);
 
 //Delete
 router.delete("/delete", privilegesControllers.deletePrivilege);

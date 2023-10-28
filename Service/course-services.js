@@ -9,43 +9,52 @@ const knex = require("knex")({
   },
 });
 
-async function createModule(module) {
-  return knex("modules").insert({
-    name_module: module.name,
-    description_module: module.description,
+async function createCourse(course) {
+  return knex("courses").insert({
+    name_course: course.name,
+    description_course: course.description,
+    user_creator: course.creator,
   });
 }
 
-async function updateModuleName(module) {
-  return knex("modules")
-    .where({ id_module: module.id_module })
-    .update({ name_module: module.name });
-}
-
-async function updateModuleDescription(module) {
+async function updateCourseName(course) {
   return knex("courses")
-    .where({ id_module: module.id_module })
-    .update({ description_module: module.description });
+    .where({ id_course: course.id })
+    .update({
+      name_course: course.name,
+      user_editor: course.editor,
+      last_modification: new Date(),
+    });
 }
 
-async function deleteModule(id) {
+async function updateCourseDescription(course) {
+  return knex("courses")
+    .where({ id_course: course.id })
+    .update({
+      description_course: course.description,
+      user_editor: course.editor,
+      last_modification: new Date(),
+    });
+}
+
+async function deleteCourse(id) {
   try {
-    return await knex("modules").where("id_module", id).del();
+    return await knex("courses").where("id_course", id).del();
   } catch (error) {
     throw new Error(error.message);
   }
 }
 
-async function getModules() {
-  let modules = await knex("modules").select("*");
-  modules = JSON.stringify(modules);
-  return JSON.parse(modules);
+async function getCourses() {
+  let courses = await knex("courses").select("*");
+  courses = JSON.stringify(courses);
+  return JSON.parse(courses);
 }
 
 module.exports = {
-  createModule,
-  updateModuleDescription,
-  updateModuleName,
-  deleteModule,
-  getModules,
+  createCourse,
+  updateCourseName,
+  updateCourseDescription,
+  deleteCourse,
+  getCourses,
 };

@@ -124,7 +124,7 @@ async function loginUser(req, res) {
 }
 
 async function updateUserPassword(req, res) {
-  const { email, password } = req.body;
+  const { email, password, editor } = req.body;
   const errorMessages = [];
 
   try {
@@ -150,6 +150,7 @@ async function updateUserPassword(req, res) {
         email: email,
         encryptedPassword: encryptedPassword,
         salt: salt,
+        editor: editor,
       });
 
       res.send({
@@ -165,12 +166,13 @@ async function updateUserPassword(req, res) {
 }
 
 async function updateUserName(req, res) {
-  const { email, name } = req.body;
+  const { email, name, editor } = req.body;
 
   try {
     await userServices.updUserName({
       email: email,
       name: name,
+      editor: editor,
     });
 
     res.send({
@@ -185,12 +187,13 @@ async function updateUserName(req, res) {
 }
 
 async function updateUserPhone(req, res) {
-  const { email, phone } = req.body;
+  const { email, phone, editor } = req.body;
 
   try {
     await userServices.updUserPhone({
       email: email,
       phone: phone,
+      editor: editor,
     });
 
     res.send({
@@ -205,7 +208,7 @@ async function updateUserPhone(req, res) {
 }
 
 async function updateUserEmail(req, res) {
-  const { email, newEmail } = req.body;
+  const { email, newEmail, editor } = req.body;
   const errorMessages = [];
 
   try {
@@ -224,6 +227,7 @@ async function updateUserEmail(req, res) {
     await userServices.updUserEmail({
       email: email,
       newEmail: newEmail,
+      editor: editor,
     });
 
     res.send({
@@ -238,12 +242,13 @@ async function updateUserEmail(req, res) {
 }
 
 async function updateUserActive(req, res) {
-  const { email, active } = req.body;
+  const { email, active, editor } = req.body;
 
   try {
     await userServices.changeUserActive({
       email: email,
       active: active,
+      editor: editor,
     });
 
     res.send({
@@ -320,7 +325,7 @@ function encryptPassword(
       parseInt(process.env.KEY_LENGTH),
       "sha256"
     )
-    
+
     .toString("base64");
 
   return {

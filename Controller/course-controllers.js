@@ -1,59 +1,74 @@
-const moduleServices = require("../Service/modules-services");
+const courseServices = require("../Service/course-services");
 
-async function createModule(req, res) {
-  const { name, description } = req.body;
+async function createCourse(req, res) {
+  const { name, description, creator } = req.body;
 
   try {
-    await moduleServices.createModule({ name, description });
-    res.send({ message: "Se ha creado el modulo exitosamente" });
+    await courseServices.createCourse({
+      name: name,
+      description: description,
+      creator: creator,
+    });
+    res.send({ message: "Se ha creado el curso exitosamente" });
   } catch (error) {
-    res.send({ error: "No se pudo crear el modulo" });
+    res.send({ error: "No se pudo crear el curso" });
   }
 }
 
-async function updateModuleName(req, res) {
-  const { id_module, name } = rqe.body;
+async function updateCourseName(req, res) {
+  const { id, name, editor } = req.body;
 
   try {
-    await moduleServices.updateModuleName({ id_module, name });
+    await courseServices.updateCourseName({
+      id: id,
+      name: name,
+      editor: editor,
+    });
   } catch (error) {
-    res.send({ error: "No fue posible actualizar el nombre del modulo" });
+    res.send({ error: "No fue posible actualizar el nombre del curso" });
   }
 }
 
-async function updateModuleDescription(req, res) {
-  const { id_module, description } = req.body;
+async function updateCourseDescription(req, res) {
+  const { id, description, editor } = req.body;
 
   try {
-    await moduleServices.updateModuleDescription({ id_module, description });
+    await courseServices.updateCourseDescription({
+      id: id,
+      description: description,
+      editor: editor,
+    });
   } catch (error) {
-    res.send({ error: "No fue posible actualizar la descripción del modulo" });
+    res.send({ error: "No fue posible actualizar la descripcion del curso" });
   }
 }
 
-async function deleteModule(req, res) {
+async function deleteCourse(req, res) {
   const { id } = req.body;
+
   try {
-    await moduleServices.deleteModule(id);
-    res.send({ message: "Se ha eliminado el modulo exitosamente" });
+    await courseServices.deleteCourse(id);
   } catch (error) {
-    res.send({ error: "No fue posible eliminar el modulo" });
+    res.send({ error: "No fue posible eliminar el curso" });
   }
 }
 
-async function getModules(req, res) {
+async function getCourses(req, res) {
   try {
-    let modulesInfo = await moduleServices.getModules();
-    res.send({ modules: modulesInfo });
+    const courses = await courseServices.getCourses();
+    res.send({
+      coursesInfo: courses,
+      message: "Se han obtenido los cursos exitosamente",
+    });
   } catch (error) {
-    res.send({ error: "No fue posible recuperar los modulos" });
+    res.send({ error: "No fue posible obtener los cursos" });
   }
 }
 
 module.exports = {
-  createModule,
-  updateModuleDescription,
-  updateModuleName,
-  deleteModule,
-  getModules,
+  createCourse,
+  updateCourseName,
+  updateCourseDescription,
+  deleteCourse,
+  getCourses,
 };

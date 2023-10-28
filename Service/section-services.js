@@ -10,48 +10,54 @@ const knex = require("knex")({
 });
 
 //Post
-async function createCourse(id) {
-  await knex("courses").insert({
-    id_module: id,
+async function createSection(section) {
+  await knex("sections").insert({
+    id_section: section.id,
+    id_course: section.course,
     quarter: Date.now().quarter(),
     year: Date.now().year(),
+    user_creator: section.creator,
   });
 }
 
-async function assignTeacher(course) {
-  return knex("courses").where({ id_course: course.id }).update({
-    id_teacher: course.id_teacher,
-    active_course: 1,
+async function assignTeacher(section) {
+  return knex("sections").where({ id_section: section.id }).update({
+    id_teacher: section.teacher,
+    active_section: 1,
+    last_modification: Date.now(),
+    user_editor: section.editor,
   });
 }
 
-async function setActiveCourse(course) {
-  return knex("courses")
-    .where({ id_course: course.id })
-    .update({ active_course: course.active });
+async function setActiveSection(section) {
+  return knex("sections").where({ id_section: section.id }).update({
+    active_section: section.active,
+    last_modification: Date.now(),
+    user_editor: section.editor,
+  });
 }
 
 //Get
-async function getTeacherCourse(email_user) {
-  let courses = await knex
-    .select("courses.* as courseInfo")
+async function getTeacherSection(email_user) {
+  let sections = await knex
+    .select("sections.*")
     .table("users")
-    .innerJoin("courses", "users.id_user = courses.id_teacher")
+    .innerJoin("sections", "users.id_user = sections.id_teacher")
     .where("users.email_user", email_user);
-  courses = JSON.stringify(courses);
-  return JSON.parse(courses);
+  sections = JSON.stringify(sections);
+  return JSON.parse(sections);
 }
 
-async function getAllCourse() {
-  let courses = await knex.select("*").from("courses");
-  courses = JSON.stringify(courses);
-  return JSON.parse(courses);
+async function getAllSections() {
+  let sections = await knex.select("*").from("sections");
+  sections = JSON.stringify(sections);
+  return JSON.parse(sections);
 }
 
 module.exports = {
-  createCourse,
+  createSection,
   assignTeacher,
-  setActiveCourse,
-  getTeacherCourse,
-  getAllCourse,
+  setActiveSection,
+  getTeacherSection,
+  getAllSections,
 };

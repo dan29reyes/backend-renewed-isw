@@ -13,11 +13,12 @@ const knex = require("knex")({
 async function createRol(rol) {
   return await knex("roles").insert({
     name_rol: rol.name,
+    user_creator: rol.creator,
   });
 }
 
 async function assignPrivilegesToRol(rolId, privilegeId) {
-  const rol = await knex("roles").select().where("id_rol", rolId).first();
+  const rol = await knex("roles").select().where("id_rol", rolId);
   if (!rol) {
     throw new Error("Rol not found");
   }
@@ -35,8 +36,12 @@ async function assignPrivilegesToRol(rolId, privilegeId) {
   });
 }
 
-async function updateRolName(id, name) {
-  return knex("roles").where({ id_rol: id }).update({ name_rol: name });
+async function updateRolName(id, name, editor) {
+  return knex("roles").where({ id_rol: id }).update({
+    name_rol: name,
+    user_editor: editor,
+    last_modification: Date.now(),
+  });
 }
 
 //Get
@@ -79,7 +84,6 @@ async function removePrivilegeFromRol(idRol, idPrivilege) {
         id_privilege: idPrivilege,
       })
       .del();
-    console.log("Privilege removed successfully");
   } catch (error) {
     throw new Error(error.message);
   }

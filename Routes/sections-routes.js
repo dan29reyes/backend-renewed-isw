@@ -1,13 +1,15 @@
 const express = require("express");
 const router = express.Router();
 
-const courseControllers = require("../Controller/section-controller");
+const sectionController = require("../Controller/section-controller");
 
-router.post("/create", courseControllers.createCourse);
-router.post("/assignTeacher", courseControllers.assignTeacher);
-router.post("/setActive", courseControllers.setActiveCourse);
+//Post
+router.post("/create", sectionController.createSection);
+router.post("/assign", sectionController.assignTeacher);
+router.post("/setActive", sectionController.setActiveSection);
 
-router.get("/viewTeacherCourses", courseControllers.getTeacherCourse);
-router.get("/viewAll", courseControllers.getAllCourse);
+//Get
+router.post("/getTeacher", sectionController.getTeacherSection);
+router.get("/getAll", sectionController.getAllSections);
 
 module.exports = router;

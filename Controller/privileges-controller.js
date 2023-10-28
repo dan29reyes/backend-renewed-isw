@@ -1,10 +1,14 @@
 const privilegeServices = require("../Service/privileges-services");
 
-const createPrivilege = async (req, res) => {
-  const { name } = req.body;
+async function createPrivilege(req, res) {
+  const { element, privilege, creator } = req.body;
   try {
-    if (typeof name == "string") {
-      const [id] = await privilegeServices.createPrivilege(req.body);
+    if (typeof element == "string" && typeof privilege == "string") {
+      const [id] = await privilegeServices.createPrivilege({
+        id_elemento: element,
+        privilege: privilege,
+        creator: creator,
+      });
       res.send({ id });
     }
   } catch (e) {
@@ -12,9 +16,41 @@ const createPrivilege = async (req, res) => {
       error: e.toString(),
     });
   }
-};
+}
 
-const getPrivileges = async (req, res) => {
+async function updatePrivilegeElement(req, res) {
+  const { id, element, editor } = req.body;
+  try {
+    if (
+      typeof id == "number" &&
+      typeof element == "string" &&
+      typeof editor == "number"
+    ) {
+      await privilegeServices.updatePrivilegeElement(id, element, editor);
+      res.send({ updatedPrivilegeId: id });
+    }
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+async function updatePrivilege(req, res) {
+  const { id, privilege, editor } = req.body;
+  try {
+    if (
+      typeof id == "number" &&
+      typeof privilege == "string" &&
+      typeof editor == "number"
+    ) {
+      await privilegeServices.updatePrivilege(id, privilege, editor);
+      res.send({ updatedPrivilegeId: id });
+    }
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+async function getPrivileges(req, res) {
   try {
     const privileges = await privilegeServices.getPrivileges();
     res.send(privileges);
@@ -23,21 +59,9 @@ const getPrivileges = async (req, res) => {
       error: e.toString(),
     });
   }
-};
+}
 
-const updatePrivilegeName = async (req, res) => {
-  const { id, name } = req.body;
-  try {
-    if (typeof id == "number" && typeof name == "string") {
-      await privilegeServices.updatePrivilegeName(id, name);
-      res.send({ updatedPrivilegeId: id });
-    }
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-const deletePrivilege = async (req, res) => {
+async function deletePrivilege(req, res) {
   const { id } = req.body;
   try {
     if (typeof id == "number") {
@@ -47,11 +71,12 @@ const deletePrivilege = async (req, res) => {
   } catch (e) {
     console.log(e);
   }
-};
+}
 
 module.exports = {
   createPrivilege,
+  updatePrivilegeElement,
+  updatePrivilege,
   getPrivileges,
-  updatePrivilegeName,
   deletePrivilege,
 };

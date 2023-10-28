@@ -21,34 +21,44 @@ async function createUser(user) {
 }
 
 async function updUserName(user) {
-  return knex("users")
-    .where("email_user", user.email)
-    .update("name_user", user.name);
+  return knex("users").where("email_user", user.email).update({
+    name_user: user.name,
+    user_editor: user.editor,
+    last_modification: new Date(),
+  });
 }
 
 async function updUserEmail(user) {
-  return knex("users")
-    .where("email_user", user.email)
-    .update("email_user", user.newEmail);
+  return knex("users").where("email_user", user.email).update({
+    email_user: user.newEmail,
+    user_editor: user.editor,
+    last_modification: new Date(),
+  });
 }
 
 async function updUserNumber(user) {
-  return knex("users")
-    .where("email_user", user.email)
-    .update("number_user", user.number);
+  return knex("users").where("email_user", user.email).update({
+    number_user: user.number,
+    user_editor: user.editor,
+    last_modification: new Date(),
+  });
 }
 
 async function updUserPassword(user) {
   return await knex("users").where({ email_user: user.email }).update({
     password_user: user.encryptedPassword,
     salt_user: user.salt,
+    user_editor: user.editor,
+    last_modification: new Date(),
   });
 }
 
 async function changeUserActive(user) {
-  return knex("users")
-    .where("email_user", user.email)
-    .update("active_user", user.active);
+  return knex("users").where("email_user", user.email).update({
+    active_user: user.active,
+    user_editor: user.editor,
+    last_modification: new Date(),
+  });
 }
 
 async function assignRole(user) {
