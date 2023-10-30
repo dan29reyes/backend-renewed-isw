@@ -62,6 +62,38 @@ async function sendEmail(body) {
   });
 }
 
+async function sendEmailMultiple(name, email, subject, message, recipients) {
+  const contentHTML = `
+  <h1>Correo del remitente: ${email}</h1>
+  <p>Estimado ${name}, se le escribe con el siguiente objetivo: ${subject} para informarle lo siguiente: ${message}</p>
+`;
+
+  const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  const recipientEmails = recipients.split(",");
+
+  const sendPromises = recipientEmails.map(async (recipient) => {
+    const info = await transporter.sendMail({
+      from: "asesoria.psicologica.unitec@gmail.com",
+      to: recipient.trim(),
+      subject: subject,
+      html: contentHTML,
+    });
+    console.log("Message sent to", recipient, info.messageId);
+    return `Correo enviado a ${recipient}`;
+  });
+
+  const results = await Promise.all(sendPromises);
+  return results;
+}
+
 module.exports = {
   sendEmail,
+  sendEmailMultiple,
 };

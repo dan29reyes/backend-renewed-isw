@@ -2,11 +2,13 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
-
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
-const allowedOrigins = ['Access-Control-Allow-Origin',"http://localhost:3000"];
+const secretKey = process.env.SECRETKEY;
+app.use(cookieParser(secretKey));
 
+const allowedOrigins = ['Access-Control-Allow-Origin',"http://localhost:3000"];
 const corsOptions = {
   origin: function (origin, callback) {
     console.log(origin);
@@ -30,7 +32,7 @@ const patientsRouter = require("./Routes/patients.routes")
 const courseRouter = require("./Routes/course-routes")
 const sectionRouter = require("./Routes/sections-routes")
 const clinicRouter = require("./Routes/clinics-routes")
-const announceRouter = require("./Routes/announce-routes")
+const announceRouter = require("./Routes/announcement-routes")
 
 app.use("/users", usersRouter);
 app.use("/roles", rolesRouter);

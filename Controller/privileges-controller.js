@@ -3,13 +3,17 @@ const privilegeServices = require("../Service/privileges-services");
 async function createPrivilege(req, res) {
   const { element, privilege, creator } = req.body;
   try {
-    if (typeof element == "string" && typeof privilege == "string") {
-      const [id] = await privilegeServices.createPrivilege({
-        id_elemento: element,
+    if (
+      typeof element == "string" &&
+      typeof privilege == "number" &&
+      typeof creator == "number"
+    ) {
+      await privilegeServices.createPrivilege({
+        element: element,
         privilege: privilege,
         creator: creator,
       });
-      res.send({ id });
+      res.send({ message: "Se ha creado el privilegio" });
     }
   } catch (e) {
     res.status(500).send({
@@ -39,7 +43,7 @@ async function updatePrivilege(req, res) {
   try {
     if (
       typeof id == "number" &&
-      typeof privilege == "string" &&
+      typeof privilege == "number" &&
       typeof editor == "number"
     ) {
       await privilegeServices.updatePrivilege(id, privilege, editor);

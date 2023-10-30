@@ -1,20 +1,20 @@
 const rolesServices = require("../Service/roles-services");
 
-async function createRol(req, res) {
+async function createRole(req, res) {
   try {
     const { name, creator } = req.body;
-    await rolesServices.createRol({ name: name, creator: creator });
-    res.send({ message: "Rol created successfully" });
+    await rolesServices.createRole({ name: name, creator: creator });
+    res.send({ message: "Role created successfully" });
   } catch (error) {
     res.send({ error: error.message });
   }
 }
 
-async function assignPrivilegesToRol(req, res) {
+async function assignPrivilegesToRole(req, res) {
   try {
-    const { id_rol, id_privilege } = req.body;
-    await rolesServices.assignPrivilegesToRol(id_rol, id_privilege);
-    res.send({ message: "Privileges assigned to rol successfully" });
+    const { id_role, id_privilege, creator } = req.body;
+    await rolesServices.assignPrivilegesToRole(id_role, id_privilege, creator);
+    res.send({ message: "Privileges assigned to role successfully" });
   } catch (error) {
     res.send({ error: error.message });
   }
@@ -29,40 +29,40 @@ async function getRoles(req, res) {
   }
 }
 
-async function getRolPrivileges(req, res) {
+async function getRolePrivileges(req, res) {
   try {
-    const id = req.body;
-    const rolesPrivileges = await rolesServices.getRolPrivileges(id);
-    res.send(rolesPrivileges);
+    const { id } = req.body;
+    const rolesPrivileges = await rolesServices.getRolePrivileges(id);
+    res.send({ roleInfo: rolesPrivileges });
   } catch (error) {
     res.send({ error: error.message });
   }
 }
 
-async function updateRolName(req, res) {
+async function updateRoleName(req, res) {
   try {
-    const { id_rol, name, editor } = req.body;
-    await rolesServices.updateRolName(id_rol, name, editor);
-    res.send({ message: "Rol name updated successfully" });
+    const { id_role, name, editor } = req.body;
+    await rolesServices.updateRoleName(id_role, name, editor);
+    res.send({ message: "Role name updated successfully" });
   } catch (error) {
     res.send({ error: error.message });
   }
 }
 
-async function deleteRol(req, res) {
+async function deleteRole(req, res) {
   try {
-    const { id_rol } = req.params;
-    await rolesServices.deleteRol(id_rol);
+    const { id_role } = req.params;
+    await rolesServices.deleteRole(id_role);
     res.send({ message: "Rol deleted successfully" });
   } catch (error) {
     res.send({ error: error.message });
   }
 }
 
-async function removePrivilegeFromRol(req, res) {
+async function removePrivilegeFromRole(req, res) {
   try {
-    const { id_rol, id_privilege } = req.body;
-    await rolesServices.removePrivilegeFromRol(id_rol, id_privilege);
+    const { id_role, id_privilege } = req.body;
+    await rolesServices.removePrivilegeFromRole(id_role, id_privilege);
     res.send({ message: "Privilege removed from rol successfully" });
   } catch (error) {
     res.send({ error: error.message });
@@ -70,11 +70,11 @@ async function removePrivilegeFromRol(req, res) {
 }
 
 module.exports = {
-  createRol,
-  assignPrivilegesToRol,
+  createRole,
+  assignPrivilegesToRole,
   getRoles,
-  getRolPrivileges,
-  updateRolName,
-  deleteRol,
-  removePrivilegeFromRol,
+  getRolePrivileges,
+  updateRoleName,
+  deleteRole,
+  removePrivilegeFromRole,
 };

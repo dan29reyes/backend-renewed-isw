@@ -12,13 +12,14 @@ const knex = require("knex")({
 //Post
 async function createPrivilege(privilege) {
   return knex("privileges").insert({
-    id_elemento: privilege.elemento,
-    privilege: privilege.name,
+    id_elemento: privilege.element,
+    privilege: privilege.privilege,
     user_creator: privilege.creator,
   });
 }
 
 async function updatePrivilegeElement(id, element, editor) {
+  
   return knex("privileges")
     .where({ id_privilege: id })
     .update({
@@ -49,7 +50,6 @@ async function getPrivileges() {
 async function deletePrivilege(id) {
   try {
     await knex("privileges").where("id_privilege", id).del();
-    console.log("Privilege deleted successfully");
   } catch (error) {
     throw new Error(error.message);
   }

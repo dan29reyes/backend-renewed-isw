@@ -19,7 +19,7 @@ async function createCourse(course) {
 
 async function updateCourseName(course) {
   return knex("courses")
-    .where({ id_course: course.id })
+    .where("id_course", course.id)
     .update({
       name_course: course.name,
       user_editor: course.editor,

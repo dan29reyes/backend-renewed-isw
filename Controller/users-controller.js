@@ -3,9 +3,10 @@ const userServices = require("../Service/users-services");
 
 const { isEmail, isPassword } = require("../Utils/validator");
 const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 
 async function registerUser(req, res) {
-  const { name, email, phone, password } = req.body;
+  const { name, email, phone, password, type, active } = req.body;
 
   try {
     const errorMessages = [];
@@ -18,7 +19,6 @@ async function registerUser(req, res) {
     }
 
     const email_exists = await userServices.findExistingEmail(email);
-
     if (!email_exists) {
       errorMessages.push("Ya existe una cuenta con este correo electrónico");
     }
@@ -36,14 +36,25 @@ async function registerUser(req, res) {
           "sha256"
         )
         .toString("base64");
-
-      const newUserId = createUser({
-        name: name,
-        email: email,
-        phone: phone,
-        encryptedPassword: encryptedPassword,
-        salt: salt,
-      });
+      let newUserId = null;
+      if(type === "patient"){
+        newUserId = userServices.createPatient({
+          name: name,
+          email: email,
+          phone: phone,
+          encryptedPassword: encryptedPassword,
+          salt: salt,
+        });
+      }else{
+        newUserId = userServices.createUser({
+          name: name,
+          email: email,
+          phone: phone,
+          encryptedPassword: encryptedPassword,
+          salt: salt,
+          active: active,
+        });
+      }
 
       res.send({
         success: true,
@@ -73,7 +84,6 @@ async function loginUser(req, res) {
       errorMessage.push("No existe un correo con este email");
     }
     if (errorMessage.length) {
-      console.log(errorMessage);
       res.send({
         errorMessage,
       });
@@ -106,6 +116,14 @@ async function loginUser(req, res) {
             expiresIn: "30d",
           }
         );
+
+        res.cookie("email", email, {
+          maxAge: 259200000, // Duración de 3 días en milisegundos
+          httpOnly: true, // La cookie solo es accesible desde el servidor
+          secure: true, // La cookie solo se envía a través de conexiones seguras (HTTPS)
+          sameSite: "lax", // Restringe el envío de cookies a solicitudes de terceros
+          signed: true, // Habilita la firma de la cookie
+        });
 
         res.send({
           name: email_now.name_user,
@@ -166,18 +184,18 @@ async function updateUserPassword(req, res) {
 }
 
 async function updateUserName(req, res) {
-  const { email, name, editor } = req.body;
+  const { id, name, editor } = req.body;
 
   try {
     await userServices.updUserName({
-      email: email,
+      id: id,
       name: name,
       editor: editor,
     });
 
     res.send({
       success: true,
-      email,
+      id,
     });
   } catch (e) {
     res.status(HTTPCodes.INTERNAL_SERVER_ERROR).send({
@@ -187,18 +205,18 @@ async function updateUserName(req, res) {
 }
 
 async function updateUserPhone(req, res) {
-  const { email, phone, editor } = req.body;
+  const { id, phone, editor } = req.body;
 
   try {
-    await userServices.updUserPhone({
-      email: email,
+    await userServices.updUserNumber({
+      id: id,
       phone: phone,
       editor: editor,
     });
 
     res.send({
       success: true,
-      email,
+      id,
     });
   } catch (e) {
     res.status(HTTPCodes.INTERNAL_SERVER_ERROR).send({
@@ -208,7 +226,7 @@ async function updateUserPhone(req, res) {
 }
 
 async function updateUserEmail(req, res) {
-  const { email, newEmail, editor } = req.body;
+  const { id, newEmail, editor } = req.body;
   const errorMessages = [];
 
   try {
@@ -216,7 +234,7 @@ async function updateUserEmail(req, res) {
       errorMessages.push("Este correo electrónico no es valido");
     }
 
-    if (userServices.findExistingEmail(newEmail)) {
+    if (!userServices.findExistingEmail(newEmail)) {
       errorMessages.push("Este correo electrónico ya está en uso");
     }
 
@@ -225,14 +243,14 @@ async function updateUserEmail(req, res) {
     }
 
     await userServices.updUserEmail({
-      email: email,
+      id: id,
       newEmail: newEmail,
       editor: editor,
     });
 
     res.send({
       success: true,
-      email,
+      id,
     });
   } catch (e) {
     res.status(HTTPCodes.INTERNAL_SERVER_ERROR).send({
@@ -242,18 +260,18 @@ async function updateUserEmail(req, res) {
 }
 
 async function updateUserActive(req, res) {
-  const { email, active, editor } = req.body;
+  const { id, active, editor } = req.body;
 
   try {
     await userServices.changeUserActive({
-      email: email,
+      id: id,
       active: active,
       editor: editor,
     });
 
     res.send({
       success: true,
-      email,
+      id,
     });
   } catch (e) {
     res.status(HTTPCodes.INTERNAL_SERVER_ERROR).send({
@@ -263,12 +281,12 @@ async function updateUserActive(req, res) {
 }
 
 async function assignRole(req, res) {
-  const { id_user, id_rol } = req.body;
+  const { id_user, id_role } = req.body;
 
   try {
     await userServices.assignRole({
       id_user: id_user,
-      id_rol: id_rol,
+      id_role: id_role,
     });
 
     res.send({
@@ -283,12 +301,12 @@ async function assignRole(req, res) {
 }
 
 async function removeRole(req, res) {
-  const { id_user, id_rol } = req.body;
+  const { id_user, id_role } = req.body;
 
   try {
-    await userServices.removeRol({
+    await userServices.removeRole({
       id_user: id_user,
-      id_rol: id_rol,
+      id_role: id_role,
     });
 
     res.send({

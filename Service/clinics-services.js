@@ -12,9 +12,9 @@ const knex = require("knex")({
 //Post
 async function createClinic(clinic) {
   await knex("clinics").insert({
-    id_clinic: clinic.id,
-    id_course: clinic.course,
+    id_section: clinic.section,
     id_psychologist: clinic.psychologist,
+    user_creator: clinic.creator
   });
 }
 
@@ -22,6 +22,8 @@ async function setActiveClinic(clinic) {
   await knex("clinics")
     .update({
       active_clinic: clinic.active,
+      user_editor: clinic.editor,
+      last_modification: new Date(),
     })
     .where("id_clinic", clinic.id);
 }
@@ -30,35 +32,36 @@ async function changePsychologist(clinic) {
   await knex("clinics")
     .update({
       id_psychologist: clinic.psychologist,
+      user_editor: clinic.editor,
+      last_modification: new Date(),
     })
     .where("id_clinic", clinic.id);
 }
 
-//Get
-async function viewAllCourseClinics(id) {
-  let clinics = await knex("clinics").select("*").where(id_course, id);
+async function viewAllSectionClinics(id) {
+  let clinics = await knex("clinics").select("*").where("id_section", id);
   clinics = JSON.stringify(clinics);
   return JSON.parse(clinics);
 }
 
 async function viewAllPsychologistClinics(id) {
-  let clinics = await knex("clinics").select("*").where(id_psychologist, id);
+  let clinics = await knex("clinics").select("*").where("id_psychologist", id);
   clinics = JSON.stringify(clinics);
   return JSON.parse(clinics);
 }
 
-//Functions
-async function findExistingClinicId(id) {
-  let clinic = await knex("clinics").select("*").where("id_clinic", id);
-  clinic = JSON.stringify(clinic);
-  return JSON.parse(clinic);
+//Get
+async function viewAllClinics() {
+  let clinics = await knex("clinics").select("*");
+  clinics = JSON.stringify(clinics);
+  return JSON.parse(clinics);
 }
 
 module.exports = {
   createClinic,
-  viewAllCourseClinics,
+  viewAllSectionClinics,
   viewAllPsychologistClinics,
   setActiveClinic,
   changePsychologist,
-  findExistingClinicId,
+  viewAllClinics,
 };

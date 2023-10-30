@@ -24,6 +24,7 @@ async function updateCourseName(req, res) {
       name: name,
       editor: editor,
     });
+    res.send({ message: "Se ha actualizado el nombre del curso exitosamente" });
   } catch (error) {
     res.send({ error: "No fue posible actualizar el nombre del curso" });
   }
@@ -38,6 +39,9 @@ async function updateCourseDescription(req, res) {
       description: description,
       editor: editor,
     });
+    res.send({
+      message: "Se ha actualizado la descripcion del curso exitosamente",
+    });
   } catch (error) {
     res.send({ error: "No fue posible actualizar la descripcion del curso" });
   }
@@ -48,6 +52,7 @@ async function deleteCourse(req, res) {
 
   try {
     await courseServices.deleteCourse(id);
+    res.send({ message: "Se ha eliminado el curso exitosamente" });
   } catch (error) {
     res.send({ error: "No fue posible eliminar el curso" });
   }

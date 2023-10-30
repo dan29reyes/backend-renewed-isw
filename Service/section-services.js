@@ -11,40 +11,44 @@ const knex = require("knex")({
 
 //Post
 async function createSection(section) {
+  let date = new Date();
+  let month = date.getMonth();
+  let quarter = month < 4 ? 1 : month < 7 ? 2 : month < 10 ? 3 : 4;
   await knex("sections").insert({
     id_section: section.id,
     id_course: section.course,
-    quarter: Date.now().quarter(),
-    year: Date.now().year(),
+    quarter: quarter,
+    year: date.getFullYear(),
     user_creator: section.creator,
   });
 }
 
 async function assignTeacher(section) {
-  return knex("sections").where({ id_section: section.id }).update({
+  return knex("sections").where("id_section", section.id).update({
     id_teacher: section.teacher,
     active_section: 1,
-    last_modification: Date.now(),
+    last_modification: new Date(),
     user_editor: section.editor,
   });
 }
 
 async function setActiveSection(section) {
-  return knex("sections").where({ id_section: section.id }).update({
+  return knex("sections").where("id_section", section.id).update({
     active_section: section.active,
-    last_modification: Date.now(),
+    last_modification: new Date(),
     user_editor: section.editor,
   });
 }
 
 //Get
-async function getTeacherSection(email_user) {
-  let sections = await knex
-    .select("sections.*")
-    .table("users")
-    .innerJoin("sections", "users.id_user = sections.id_teacher")
-    .where("users.email_user", email_user);
-  sections = JSON.stringify(sections);
+async function getTeacherSection(id_user) {
+  let sections = await knex.raw(`
+      SELECT sections.*
+      FROM sections
+      INNER JOIN users ON users.id_user = sections.id_teacher
+      WHERE users.id_user = ?
+    `, [id_user]);
+  sections = JSON.stringify(sections[0]);
   return JSON.parse(sections);
 }
 

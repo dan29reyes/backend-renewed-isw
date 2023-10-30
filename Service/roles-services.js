@@ -10,17 +10,17 @@ const knex = require("knex")({
 });
 
 //Post
-async function createRol(rol) {
+async function createRole(role) {
   return await knex("roles").insert({
-    name_rol: rol.name,
-    user_creator: rol.creator,
+    name_role: role.name,
+    user_creator: role.creator,
   });
 }
 
-async function assignPrivilegesToRol(rolId, privilegeId) {
-  const rol = await knex("roles").select().where("id_rol", rolId);
-  if (!rol) {
-    throw new Error("Rol not found");
+async function assignPrivilegesToRole(roleId, privilegeId, creator) {
+  const role = await knex("roles").select().where("id_role", roleId);
+  if (!role) {
+    throw new Error("Role not found");
   }
 
   const privileges = await knex("privileges")
@@ -31,56 +31,56 @@ async function assignPrivilegesToRol(rolId, privilegeId) {
   }
 
   return await knex("roles_privileges").insert({
-    id_rol: rolId,
+    id_role: roleId,
     id_privilege: privilegeId,
+    user_creator: creator,
   });
 }
 
-async function updateRolName(id, name, editor) {
-  return knex("roles").where({ id_rol: id }).update({
-    name_rol: name,
+async function updateRoleName(id, name, editor) {
+  return knex("roles").where({ id_role: id }).update({
+    name_role: name,
     user_editor: editor,
-    last_modification: Date.now(),
+    last_modification: new Date(),
   });
 }
 
 //Get
 async function getRoles() {
-  let rols = await knex.select("*").from("roles");
-  rols = JSON.stringify(rols);
-  return JSON.parse(rols);
+  let roles = await knex.select("*").from("roles");
+  roles = JSON.stringify(roles);
+  return JSON.parse(roles);
 }
 
-async function getRolPrivileges(id) {
-  let rolesPrivileges = await knex
+async function getRolePrivileges(id) {
+  let rolesPrivileges = await knex("roles_privileges")
     .select("*")
-    .from("roles_privileges")
-    .where("id_rol", id);
+    .where("id_role", id);
   rolesPrivileges = JSON.stringify(rolesPrivileges);
   return JSON.parse(rolesPrivileges);
 }
 
 //Delete
-async function deleteRol(id) {
+async function deleteRole(id) {
   try {
-    const rol = await knex("roles").select().where("id_rol", id).first();
-    if (!rol) {
-      throw new Error("Rol not found");
+    const role = await knex("roles").select().where("id_role", id).first();
+    if (!role) {
+      throw new Error("Role not found");
     }
 
-    await knex("roles").where("id_rol", id).del();
-    console.log("Rol deleted successfully");
+    await knex("roles").where("id_role", id).del();
+    console.log("Role deleted successfully");
   } catch (error) {
     throw new Error(error.message);
   }
 }
 
-async function removePrivilegeFromRol(idRol, idPrivilege) {
+async function removePrivilegeFromRole(idRole, idPrivilege) {
   try {
-    const rol_privilege = await knex("roles_privileges")
+    await knex("roles_privileges")
       .select()
       .where({
-        id_rol: idRol,
+        id_role: idRole,
         id_privilege: idPrivilege,
       })
       .del();
@@ -90,11 +90,11 @@ async function removePrivilegeFromRol(idRol, idPrivilege) {
 }
 
 module.exports = {
-  createRol,
+  createRole,
+  assignPrivilegesToRole,
   getRoles,
-  getRolPrivileges,
-  updateRolName,
-  deleteRol,
-  assignPrivilegesToRol,
-  removePrivilegeFromRol,
+  getRolePrivileges,
+  updateRoleName,
+  deleteRole,
+  removePrivilegeFromRole,
 };

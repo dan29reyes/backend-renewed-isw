@@ -1,23 +1,27 @@
 const clinicServices = require("../Service/clinics-services");
 
 async function createClinic(req, res) {
-  const { id, course, psychologist } = req.body;
+  const { section, psychologist, creator } = req.body;
   try {
-    if (clinicServices.findExistingClinicId(id)) {
-      await clinicServices.createClinic({ id, course, psychologist });
-      res.send({ message: "Se ha creado la clinica exitosamente" });
-    } else {
-      res.send({ message: "Ya existe una clinica con este id" });
-    }
+    await clinicServices.createClinic({
+      section: section,
+      psychologist: psychologist,
+      creator: creator,
+    });
+    res.send({ message: "Se ha creado la clinica exitosamente" });
   } catch (err) {
     res.send({ message: err.message });
   }
 }
 
 async function setActiveClinic(req, res) {
-  const { id, active } = req.body;
+  const { id, active, editor } = req.body;
   try {
-    await clinicServices.setActiveClinic({ id, active });
+    await clinicServices.setActiveClinic({
+      id: id,
+      active: active,
+      editor: editor,
+    });
     res.send({ message: "Se ha actualizado la clinica exitosamente" });
   } catch (err) {
     res.send({ message: err.message });
@@ -25,20 +29,24 @@ async function setActiveClinic(req, res) {
 }
 
 async function changePsychologist(req, res) {
-  const { id, psychologist } = req.body;
+  const { id, psychologist, editor } = req.body;
   try {
-    await clinicServices.changePsychologist({ id, psychologist });
+    await clinicServices.changePsychologist({
+      id: id,
+      psychologist: psychologist,
+      editor: editor,
+    });
     res.send({ message: "Se ha actualizado la clinica exitosamente" });
   } catch (err) {
     res.send({ message: err.message });
   }
 }
 
-async function viewAllCourseClinics(req, res) {
+async function viewAllSectionClinics(req, res) {
   const { id } = req.body;
   try {
-    const clinics = await clinicServices.viewAllCourseClinics(id);
-    res.send(clinics);
+    const clinics = await clinicServices.viewAllSectionClinics(id);
+    res.send({ clinicsInfo: clinics });
   } catch (err) {
     res.send({ message: err.message });
   }
@@ -48,7 +56,16 @@ async function viewAllPsychologistClinics(req, res) {
   const { id } = req.body;
   try {
     const clinics = await clinicServices.viewAllPsychologistClinics(id);
-    res.send(clinics);
+    res.send({ clinicsInfo: clinics });
+  } catch (err) {
+    res.send({ message: err.message });
+  }
+}
+
+async function viewAllClinics(req, res) {
+  try {
+    const clinics = await clinicServices.viewAllClinics();
+    res.send({ clinicsInfo: clinics });
   } catch (err) {
     res.send({ message: err.message });
   }
@@ -56,8 +73,9 @@ async function viewAllPsychologistClinics(req, res) {
 
 module.exports = {
   createClinic,
-  viewAllCourseClinics,
+  viewAllSectionClinics,
   viewAllPsychologistClinics,
   setActiveClinic,
   changePsychologist,
+  viewAllClinics,
 };

@@ -7,9 +7,9 @@ const sectionController = require("../Controller/section-controller");
 router.post("/create", sectionController.createSection);
 router.post("/assign", sectionController.assignTeacher);
 router.post("/setActive", sectionController.setActiveSection);
+router.post("/getTeacherSections", sectionController.getTeacherSection);
 
 //Get
-router.post("/getTeacher", sectionController.getTeacherSection);
 router.get("/getAll", sectionController.getAllSections);
 
 module.exports = router;
