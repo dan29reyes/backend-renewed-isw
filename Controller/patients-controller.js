@@ -1,21 +1,29 @@
 const patientServices = require("../Service/patients-services");
 
 async function createPatient(req, res) {
-  const { id, clinic } = req.body;
+  const { id, clinic, creator } = req.body;
   try {
-    await patientServices.createPatient({ id, clinic });
+    await patientServices.createPatient({ id, clinic, creator });
     res.send({ message: "Se ha establecido al usuario como paciente" });
   } catch (error) {
     res.send({ message: "No se pudo establecer al usuario como paciente" });
   }
 }
 
-async function updateTreatment(req, res) {
-  const { id, clinic, attended } = req.body;
+async function updateStatus(req, res) {
+  const { id, clinic, status, editor } = req.body;
   try {
-    await patientServices.updateTreatment({ id, clinic, attended });
+    await patientServices.updateStatus({ id, clinic, status, editor });
     res.send({
-      message: "Se ha actualizado el estado del paciente a " + attended,
+      message:
+        "Se ha actualizado el estado del paciente a " +
+        (status === 0
+          ? "En espera"
+          : status === 1
+          ? "En tratamiento"
+          : status === 2
+          ? "Tratado"
+          : "Cancelado"),
     });
   } catch (error) {
     res.send({ message: "No se pudo actualizar el estado del paciente" });
@@ -23,9 +31,9 @@ async function updateTreatment(req, res) {
 }
 
 async function updateColor(req, res) {
-  const { id, clinic, color } = req.body;
+  const { id, clinic, color, editor } = req.body;
   try {
-    await patientServices.updateColor({ id, color, clinic });
+    await patientServices.updateColor({ id, color, clinic, editor });
     res.send({ message: "Se ha actualizado el color de la clinica" });
   } catch (error) {
     res.send({ message: "No se pudo actualizar el color de la clinica" });
@@ -33,11 +41,12 @@ async function updateColor(req, res) {
 }
 
 async function changeClinic(req, res) {
-  const { id, clinic } = req.body;
+  const { id, clinic, newClinic, editor } = req.body;
   try {
-    await patientServices.changeClinic({ id, clinic });
+    await patientServices.changeClinic({ id, clinic, newClinic, editor });
     res.send({
-      message: "Se ha cambiado al paciente " + id + " a la clinica " + clinic,
+      message:
+        "Se ha cambiado al paciente " + id + " a la clinica " + newClinic,
     });
   } catch (error) {
     res.send({ message: "No se ha podido cambiar de clinica al paciente" });
@@ -74,11 +83,26 @@ async function viewClinicPatients(req, res) {
   }
 }
 
+async function getPatients(req, res){
+  try{
+    let patients = await patientServices.getPatients();
+    res.send({
+      message: "Pacientes recuperados exitosamente",
+      patientsInfo: patients
+    })
+  }catch(error){
+    res.send({
+      message: "No fue posible recuperar todos los pacientes"
+    })
+  }
+}
+
 module.exports = {
   createPatient,
-  updateTreatment,
+  updateStatus,
   updateColor,
   changeClinic,
   getClinicsForPatient,
   viewClinicPatients,
+  getPatients
 };

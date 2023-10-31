@@ -14,57 +14,91 @@ async function createPatient(patient) {
   await knex("patients").insert({
     id_patient: patient.id,
     id_clinic: patient.clinic,
+    user_creator: patient.creator,
   });
 }
 
-async function updateTreatment(patient) {
+async function updateStatus(patient) {
   await knex("patients")
-    .update({ attended: patient.attended })
-    .where({ id_patient: patient.id, id_clinic: patient.clinic });
+    .update({
+      status: patient.status,
+      user_editor: patient.editor,
+      last_modification: new Date(),
+    })
+    .where({
+      id_patient: patient.id,
+      id_clinic: patient.clinic,
+    });
 }
 
 async function updateColor(patient) {
   await knex("patients")
-    .update({ color_clinic: patient.color })
-    .where({ id_patient: patient.id, id_clinic: patient.clinic });
+    .update({
+      color_clinic: patient.color,
+      user_editor: patient.editor,
+      last_modification: new Date(),
+    })
+    .where({
+      id_patient: patient.id,
+      id_clinic: patient.clinic,
+    });
 }
 
 async function changeClinic(patient) {
   await knex("patients")
-    .update({ id_clinic: patient.clinic })
-    .where("id_patient", patient.id);
+    .update({
+      id_clinic: patient.newClinic,
+      user_editor: patient.editor,
+      last_modification: new Date(),
+    })
+    .where({
+      id_patient: patient.id,
+      id_clinic: patient.clinic,
+    });
 }
 
-//GET
 async function getClinicsForPatient(id) {
-  let clinics = await knex
-    .select("clinics.* as clinic", "patients.color_clinic")
-    .table("clinics")
-    .innerJoin(
-      "patients",
-      "patients.id_clinic = clinics.id_clinic and patients.id_patient = " + id
-    );
-  clinics = JSON.stringify(clinics);
+  let clinics = await knex.raw(
+    `
+      SELECT clinics.*,  patients.color_clinic
+        FROM clinics
+          INNER JOIN patients 
+            ON patients.id_clinic = clinics.id_clinic 
+              AND patients.id_patient = ?
+    `,
+    [id]
+  );
+  clinics = JSON.stringify(clinics[0]);
   return JSON.parse(clinics);
 }
 
 async function viewClinicPatients(id) {
-  let patients = await knex
-    .select("users.* as userInfo")
-    .table("patients")
-    .innerJoin(
-      "users",
-      "patients.id_patient = users.id_user and patients.id_clinic = " + id
-    );
+  let patients = await knex.raw(
+    `
+      SELECT users.id_user, users.name_user, users.email_user, users.number_user, users.active_user, users.creation_date
+        FROM patients
+          INNER JOIN users
+            ON patients.id_patient = users.id_user and patients.id_clinic = ?
+    `,
+    [id]
+  );
+  patients = JSON.stringify(patients[0]);
+  return JSON.parse(patients);
+}
+
+//GET
+async function getPatients() {
+  let patients = await knex("patients").select("*");
   patients = JSON.stringify(patients);
   return JSON.parse(patients);
 }
 
 module.exports = {
   createPatient,
-  updateTreatment,
+  updateStatus,
   updateColor,
   changeClinic,
   getClinicsForPatient,
   viewClinicPatients,
+  getPatients,
 };

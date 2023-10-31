@@ -56,10 +56,8 @@ async function updateLeido(announcement) {
     });
 }
 
-async function GetAnnouncementsForPsychologist(id) {
-  const announcements = await knex("announcements")
-    .select("*")
-    .where("user_creator", id);
+async function GetAnnouncementsForPsychologist(user_creator) {
+  let announcements = await knex("announcements").select("*").where("user_creator", user_creator);
   announcements = JSON.stringify(announcements);
   return JSON.parse(announcements);
 }
@@ -67,11 +65,11 @@ async function GetAnnouncementsForPsychologist(id) {
 async function GetAnnouncementsForClinic(id) {
   let announcements = await knex.raw(
     `
-      SELECT announcements.*
+    SELECT announcements.* 
       FROM announcements
-      INNER JOIN announcements_clinics ON announcements_clinics.id_announcement = announcements.id_announcement
-      AND announcements_clinics.id_clinic = ?
-    `,
+        INNER JOIN announcements_clinics ON announcements_clinics.id_announcement = announcements.id_announcement
+        AND announcements_clinics.id_clinic = ?
+  `,
     [id]
   );
   announcements = JSON.stringify(announcements[0]);
@@ -91,7 +89,6 @@ async function GetAnnouncementesForPatient(id) {
   announcements = JSON.stringify(announcements[0]);
   return JSON.parse(announcements);
 }
-
 
 //Get
 async function getAnnouncements() {

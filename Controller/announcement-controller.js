@@ -62,35 +62,35 @@ async function updateLeido(req, res) {
 async function GetAnnouncementsForPsychologist(req, res) {
   const { id } = req.body;
   try {
-    const announcements =
+    let announcements =
       await announcementControllers.GetAnnouncementsForPsychologist(id);
     res.send({
       message: "Se ha recuperado exitosamente los anuncios",
       announcementsInfo: announcements,
     });
   } catch (error) {
-    res.send({ error: "No fue posible recuperar los anuncios" });
+    res.send({ error: "No fue posible recuperar los anuncios", data: error });
   }
 }
 
 async function GetAnnouncementsForClinic(req, res) {
   const { id } = req.body;
   try {
-    const announcements =
+    let announcements =
       await announcementControllers.GetAnnouncementsForClinic(id);
     res.send({
       message: "Se ha recuperado exitosamente los anuncios",
       announcementsInfo: announcements,
     });
   } catch (error) {
-    res.send({ error: "No fue posible recuperar los anuncios" });
+    res.send({ error: "No fue posible recuperar los anuncios", data: error });
   }
 }
 
 async function GetAnnouncementesForPatient(req, res) {
   const { id } = req.body;
   try {
-    const announcements =
+    let announcements =
       await announcementControllers.GetAnnouncementesForPatient(id);
     res.send({
       message: "Se ha recuperado exitosamente los anuncios",

@@ -45,6 +45,7 @@ async function registerUser(req, res) {
           encryptedPassword: encryptedPassword,
           salt: salt,
         });
+        console.log("es paciente")
       }else{
         newUserId = userServices.createUser({
           name: name,
@@ -54,6 +55,7 @@ async function registerUser(req, res) {
           salt: salt,
           active: active,
         });
+        console.log("sin rol")
       }
 
       res.send({

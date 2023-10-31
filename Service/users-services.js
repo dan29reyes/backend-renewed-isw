@@ -11,7 +11,7 @@ const knex = require("knex")({
 
 //Post
 async function createUser(user){
-  knex("users").insert({
+  await knex("users").insert({
     name_user: user.name,
     email_user: user.email,
     number_user: user.phone,
@@ -22,7 +22,7 @@ async function createUser(user){
 }
 
 async function createPatient(user) {
-  knex("users").insert({
+  let patientId = await knex("users").insert({
     name_user: user.name,
     email_user: user.email,
     number_user: user.phone,
@@ -30,11 +30,12 @@ async function createPatient(user) {
     salt_user: user.salt,
   });
 
-  let role_patient = await knex("roles").select("id_role").where("name_role", "patient");
+  let role_patient = JSON.stringify(await knex("roles").select("id_role").where("name_role", "patient"));
+  role_patient = JSON.parse(role_patient)
 
-  knex("user_role").insert({
-    id_user: user.id,
-    id_role: role_patient,
+  await knex("user_role").insert({
+    id_user: patientId,
+    id_role: role_patient[0].id_role,
   });
 }
 

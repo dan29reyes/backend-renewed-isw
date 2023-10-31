@@ -8,6 +8,7 @@ router.post("/create", announcesController.createAnnouncement)
 router.post("/updateTitle", announcesController.updateTitle)
 router.post("/updateMessage", announcesController.updateMessage)
 router.post("/updateLeido", announcesController.updateLeido)
+
 router.post("/getPatientAnnounces", announcesController.GetAnnouncementesForPatient)
 router.post("/getPsychologistAnnounces", announcesController.GetAnnouncementsForPsychologist)
 router.post("/getClinicAnnounces", announcesController.GetAnnouncementsForClinic)

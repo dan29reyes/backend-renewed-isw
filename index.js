@@ -28,11 +28,12 @@ app.use(bodyParser.json());
 const usersRouter = require("./Routes/users-routes")
 const rolesRouter = require("./Routes/roles-routes")
 const privilegesRouter = require("./Routes/privileges-routes")
-const patientsRouter = require("./Routes/patients.routes")
+const patientsRouter = require("./Routes/patients-routes")
 const courseRouter = require("./Routes/course-routes")
 const sectionRouter = require("./Routes/sections-routes")
 const clinicRouter = require("./Routes/clinics-routes")
-const announceRouter = require("./Routes/announcement-routes")
+const announcementRouter = require("./Routes/announcement-routes")
+const fileRouter = require("./Routes/files-routes")
 
 app.use("/users", usersRouter);
 app.use("/roles", rolesRouter);
@@ -41,7 +42,8 @@ app.use("/patients", patientsRouter);
 app.use("/sections", sectionRouter);
 app.use("/courses", courseRouter);
 app.use("/clinics", clinicRouter);
-app.use("/announces", announceRouter);
+app.use("/announcements", announcementRouter);
+app.use("/files", fileRouter)
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
